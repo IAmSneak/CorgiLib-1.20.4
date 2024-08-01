@@ -35,7 +35,6 @@ public class StructureBoxEditor {
     public static BlockPos structureBlockPos;
     public static BlockPos structureOffset;
 
-
     public static void render(PoseStack stack, VertexConsumer consumer, double camX, double camY, double camZ, boolean b) {
         if (structureBox != null && structureBlockPos != null && structureOffset != null) {
             AABB aabb = structureBox.move(structureOffset).move(structureBlockPos);

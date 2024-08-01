@@ -14,21 +14,22 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.SuspiciousEffectHolder;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VillagerTradeRegistry {
 
     public static final Codec<Item> ITEM_CODEC = CodecUtil.createLoggedExceptionRegistryCodec(BuiltInRegistries.ITEM);
-    public static final Codec<MobEffect> MOB_EFFECT_CODEC = CodecUtil.createLoggedExceptionRegistryCodec(BuiltInRegistries.MOB_EFFECT);
 
     private final static Codec<VillagerTrades.EmeraldForItems> EMERALD_FOR_ITEMS_CODEC = RecordCodecBuilder.create(builder ->
             builder.group(
-                    ITEM_CODEC.fieldOf("item").forGetter(listing -> listing.item),
-                    Codec.INT.fieldOf("cost").forGetter(listing -> listing.cost),
+                    ITEM_CODEC.fieldOf("item").forGetter(listing -> listing.itemStack.getItem()),
+                    Codec.INT.fieldOf("cost").forGetter(listing -> listing.emeraldAmount),
                     Codec.INT.fieldOf("max_uses").forGetter(listing -> listing.maxUses),
                     Codec.INT.fieldOf("villager_xp").forGetter(listing -> listing.villagerXp)
             ).apply(builder, VillagerTrades.EmeraldForItems::new)
@@ -38,7 +39,7 @@ public class VillagerTradeRegistry {
             builder.group(
                     ITEM_CODEC.fieldOf("item").forGetter(listing -> listing.itemStack.getItem()),
                     Codec.INT.fieldOf("emerald_cost").forGetter(listing -> listing.emeraldCost),
-                    Codec.INT.fieldOf("number_of_items").forGetter(listing -> listing.numberOfItems),
+                    Codec.INT.fieldOf("number_of_items").forGetter(listing -> listing.itemStack.getCount()),
                     Codec.INT.fieldOf("max_uses").forGetter(listing -> listing.maxUses),
                     Codec.INT.fieldOf("villager_xp").forGetter(listing -> listing.villagerXp)
             ).apply(builder, VillagerTrades.ItemsForEmeralds::new)
@@ -47,20 +48,21 @@ public class VillagerTradeRegistry {
     private final static Codec<VillagerTrades.ItemsAndEmeraldsToItems> ITEMS_AND_EMERALDS_TO_ITEMS_CODEC = RecordCodecBuilder.create(builder ->
             builder.group(
                     ITEM_CODEC.fieldOf("from_item").forGetter(listing -> listing.fromItem.getItem()),
-                    Codec.INT.fieldOf("from_count").forGetter(listing -> listing.fromCount),
+                    Codec.INT.fieldOf("from_count").forGetter(listing -> listing.fromItem.getCount()),
                     Codec.INT.fieldOf("emerald_cost").forGetter(listing -> listing.emeraldCost),
                     ITEM_CODEC.fieldOf("to_item").forGetter(listing -> listing.toItem.getItem()),
-                    Codec.INT.fieldOf("to_count").forGetter(listing -> listing.toCount),
+                    Codec.INT.fieldOf("to_count").forGetter(listing -> listing.toItem.getCount()),
                     Codec.INT.fieldOf("max_uses").forGetter(listing -> listing.maxUses),
-                    Codec.INT.fieldOf("villager_xp").forGetter(listing -> listing.villagerXp)
+                    Codec.INT.fieldOf("villager_xp").forGetter(listing -> listing.villagerXp),
+                    Codec.FLOAT.fieldOf("price_multiplier").forGetter(listing -> listing.priceMultiplier)
             ).apply(builder, VillagerTrades.ItemsAndEmeraldsToItems::new)
     );
 
     private final static Codec<VillagerTrades.SuspiciousStewForEmerald> SUSPICIOUS_STEW_FOR_EMERALD_CODEC = RecordCodecBuilder.create(builder ->
             builder.group(
-                    MOB_EFFECT_CODEC.fieldOf("mob_effect").forGetter(listing -> listing.effect),
-                    Codec.INT.fieldOf("duration").forGetter(listing -> listing.duration),
-                    Codec.INT.fieldOf("xp").forGetter(listing -> listing.xp)
+                    Codec.list(SuspiciousEffectHolder.EffectEntry.CODEC).fieldOf("mob_effect").forGetter(listing -> listing.effects),
+                    Codec.INT.fieldOf("xp").forGetter(listing -> listing.xp),
+                    Codec.FLOAT.fieldOf("priceMultiplier").forGetter(listing -> listing.priceMultiplier)
             ).apply(builder, VillagerTrades.SuspiciousStewForEmerald::new)
     );
 

@@ -42,6 +42,11 @@ dependencies {
         exclude(group = "org.lwjgl")
         exclude(group = "org.lwjgl.lwjgl")
     }
+    //modImplementation("io.github.spair:imgui-java-binding:${project.properties["imgui_version"]}")
+    //modImplementation("io.github.spair:imgui-java-lwjgl3:${project.properties["imgui_version"]}")
+
+    //modImplementation("io.github.spair:imgui-java-natives-windows:${project.properties["imgui_version"]}")
+    //modImplementation("io.github.spair:imgui-java-natives-linux:${project.properties["imgui_version"]}")
 
     "shadowCommon"("io.github.spair:imgui-java-natives-windows:${project.properties["imgui_version"]}")
     "shadowCommon"("io.github.spair:imgui-java-natives-linux:${project.properties["imgui_version"]}")

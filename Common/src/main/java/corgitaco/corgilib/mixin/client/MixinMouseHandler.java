@@ -11,10 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(MouseHandler.class)
 public class MixinMouseHandler {
 
-
     @Inject(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getOverlay()Lnet/minecraft/client/gui/screens/Overlay;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    private void editor(long windowPointer, double xOffset, double yOffset, CallbackInfo ci, double increment) {
-        if (StructureBoxEditor.onScroll(increment)) {
+    private void editor(long windowPointer, double xOffset, double yOffset, CallbackInfo ci) {
+        if (StructureBoxEditor.onScroll(1)) {//todo increment
             ci.cancel();
         }
     }
